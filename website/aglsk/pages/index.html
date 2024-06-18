@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enviar Mensagem Via Bot V1</title>
+    <title>Enviar Mensagem Via Bot V2</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -47,7 +47,7 @@
     <form id="sendMessageForm">
         <div class="form-group">
             <label for="chatId">ChatID:</label>
-            <input class="form-control" type="text" id="chatId" name="chatId" placeholder="Informe o ChatID(Obs:.. Coloque o '-100' Antes Do ID ) ">
+            <input class="form-control" type="text" id="chatId" name="chatId" placeholder="Informe o ChatID (Obs: Coloque o '-100')">
         </div>
         <div class="form-group">
             <label for="token">Token:</label>
@@ -56,10 +56,6 @@
         <div class="form-group">
             <label for="message">Mensagem:</label>
             <textarea class="form-control" id="message" name="message" rows="4" placeholder="Digite sua mensagem"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="topicId">ID do Tópico:</label>
-            <input class="form-control" type="text" id="topicId" name="topicId" placeholder="Informe o ID do Tópico no Final do Link ( https://t.me/oakcic/396 ) '396' ">
         </div>
         <button type="button" class="submit-btn" onclick="sendMessage()">Enviar</button>
     </form>
@@ -72,16 +68,15 @@ function sendMessage() {
     var chatId = document.getElementById("chatId").value;
     var token = document.getElementById("token").value;
     var message = document.getElementById("message").value;
-    var topicId = document.getElementById("topicId").value;
 
-    if (chatId.trim() === "" || token.trim() === "" || message.trim() === "" || topicId.trim() === "") {
+    if (chatId.trim() === "" || token.trim() === "" || message.trim() === "") {
         alert("Por favor, preencha todos os campos!");
         return;
     }
 
     var request = new XMLHttpRequest();
     var url = "https://api.telegram.org/bot" + token + "/sendMessage";
-    var params = "chat_id=" + chatId + "&text=" + message + "&message_thread_id=" + topicId;
+    var params = "chat_id=" + chatId + "&text=" + message;
 
     request.open("POST", url, true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
