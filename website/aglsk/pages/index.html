@@ -62,8 +62,20 @@
             <textarea class="form-control" id="message" name="message" rows="4" placeholder="Digite sua mensagem"></textarea>
         </div>
         <div class="form-group">
-            <label for="photo">Foto (opcional):</label>
-            <input class="form-control" type="file" id="photo" name="photo">
+            <label for="photoOption">Opção de Foto:</label>
+            <select class="form-control" id="photoOption" name="photoOption" onchange="togglePhotoInput()">
+                <option value="none">Nenhuma</option>
+                <option value="url">URL da Foto</option>
+                <option value="file">Carregar Foto</option>
+            </select>
+        </div>
+        <div class="form-group" id="photoUrlGroup" style="display: none;">
+            <label for="photoUrl">URL da Foto:</label>
+            <input class="form-control" type="text" id="photoUrl" name="photoUrl" placeholder="Informe a URL da foto">
+        </div>
+        <div class="form-group" id="photoFileGroup" style="display: none;">
+            <label for="photoFile">Carregar Foto:</label>
+            <input class="form-control" type="file" id="photoFile" name="photoFile">
         </div>
         <button type="button" class="submit-btn" onclick="sendMessage()">Enviar</button>
     </form>
@@ -93,11 +105,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
+function togglePhotoInput() {
+    var photoOption = document.getElementById("photoOption").value;
+    document.getElementById("photoUrlGroup").style.display = photoOption === "url" ? "block" : "none";
+    document.getElementById("photoFileGroup").style.display = photoOption === "file" ? "block" : "none";
+}
+
 function sendMessage() {
     var chatId = document.getElementById("chatId").value;
     var token = document.getElementById("token").value;
     var message = document.getElementById("message").value;
-    var photo = document.getElementById("photo").files[0];
+    var photoOption = document.getElementById("photoOption").value;
 
     if (chatId.trim() === "" || token.trim() === "" || message.trim() === "") {
         alert("Por favor, preencha todos os campos obrigatórios!");
@@ -106,12 +124,28 @@ function sendMessage() {
 
     var formData = new FormData();
     formData.append("chat_id", chatId);
-    formData.append("caption", message);
 
     var url;
-    if (photo) {
-        formData.append("photo", photo);
-        url = "https://api.telegram.org/bot" + token + "/sendPhoto";
+    if (photoOption === "url") {
+        var photoUrl = document.getElementById("photoUrl").value;
+        if (photoUrl.trim() !== "") {
+            formData.append("photo", photoUrl);
+            formData.append("caption", message);
+            url = "https://api.telegram.org/bot" + token + "/sendPhoto";
+        } else {
+            alert("Por favor, preencha a URL da foto!");
+            return;
+        }
+    } else if (photoOption === "file") {
+        var photoFile = document.getElementById("photoFile").files[0];
+        if (photoFile) {
+            formData.append("photo", photoFile);
+            formData.append("caption", message);
+            url = "https://api.telegram.org/bot" + token + "/sendPhoto";
+        } else {
+            alert("Por favor, selecione um arquivo de foto!");
+            return;
+        }
     } else {
         formData.append("text", message);
         url = "https://api.telegram.org/bot" + token + "/sendMessage";
